@@ -1,0 +1,2 @@
+include ':example-app'
+rootProject.name='Beepiz external control example'

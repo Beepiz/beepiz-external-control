@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Beepiz control example</string>
+
+    <string name="permission_denied_permanently_go_to_settings">You denied the permission permanently.\nYou can grant it in the settings.</string>
+    <string name="quit">Quit</string>
+</resources>
