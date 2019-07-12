@@ -24,23 +24,30 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 askDialogMessage = "Permission required",
                 showRationaleBeforeFirstAsk = false
             )
-            //TODO: Handle application not installed, new installation, and update.
             repeatWhileActive {
+                //TODO: Handle Beepiz not installed, new installation, update and versionCode < 165.
                 runBeepizBindingUntilDisconnection { state, requiresConfig ->
-                    //TODO: Handle configuration required by suggesting the user to open Beepiz.
                     when (state) {
                         MONITORING -> {
                             ui.awaitStopMonitoringRequest()
-                            stopBeepizMonitoring()
+                            if (requiresConfig) {
+                                launchBeepizForConfiguration()
+                            } else stopBeepizMonitoring()
                         }
                         NOT_MONITORING -> {
                             ui.awaitStartMonitoringRequest()
-                            startBeepizMonitoring()
+                            if (requiresConfig) {
+                                launchBeepizForConfiguration()
+                            } else startBeepizMonitoring()
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun launchBeepizForConfiguration() {
+        startActivity(packageManager.getLaunchIntentForPackage(BeepizBindingConstants.packageName))
     }
 
     override fun onDestroy() {
