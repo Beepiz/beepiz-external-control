@@ -30,9 +30,8 @@ enum class BeepizMonitoringState {
  */
 @RequiresPermission(BeepizBindingConstants.permission)
 fun Context.startBeepizMonitoring() {
-    sendBroadcast(Intent().also {
+    sendBroadcast(Intent(BeepizBindingConstants.startAction).also {
         it.`package` = BeepizBindingConstants.packageName
-        it.action = BeepizBindingConstants.startAction
     })
 }
 
@@ -41,9 +40,8 @@ fun Context.startBeepizMonitoring() {
  */
 @RequiresPermission(BeepizBindingConstants.permission)
 fun Context.stopBeepizMonitoring() {
-    sendBroadcast(Intent().also {
+    sendBroadcast(Intent(BeepizBindingConstants.stopAction).also {
         it.`package` = BeepizBindingConstants.packageName
-        it.action = BeepizBindingConstants.stopAction
     })
 }
 
@@ -61,8 +59,7 @@ fun Context.stopBeepizMonitoring() {
 suspend fun Context.runBeepizBindingUntilDisconnection(
     handleState: suspend (state: BeepizMonitoringState, requiresConfig: Boolean) -> Unit
 ) {
-    val intent = Intent().also {
-        it.action = BeepizBindingConstants.bindAction
+    val intent = Intent(BeepizBindingConstants.bindAction).also {
         it.`package` = BeepizBindingConstants.packageName
     }
     try {
