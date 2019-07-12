@@ -64,7 +64,6 @@ suspend fun Context.runBeepizBindingUntilDisconnection(
     }
     try {
         withBoundService(intent) { serviceBinder ->
-            val service = Messenger(serviceBinder)
             val incomingChannel = Channel<Pair<BeepizMonitoringState, Boolean>>(
                 capacity = Channel.CONFLATED
             )
@@ -81,6 +80,7 @@ suspend fun Context.runBeepizBindingUntilDisconnection(
                     }
                 )
             })
+            val service = Messenger(serviceBinder)
             try {
                 val registerMessage = Message.obtain().also {
                     it.what = BeepizBindingConstants.REGISTER_CLIENT
