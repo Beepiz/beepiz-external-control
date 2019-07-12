@@ -1,5 +1,6 @@
 package com.example.beepizcontrol
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build.VERSION.SDK_INT
@@ -19,6 +20,15 @@ enum class BeepizMonitoringState {
     MONITORING, NOT_MONITORING
 }
 
+/**
+ * Requests start of Beepiz monitoring.
+ *
+ * **WARNING:** Should be called only if Beepiz doesn't requireConfig. Otherwise, the Beepiz app
+ * should be launched to let the user resolve configuration issues.
+ *
+ * Future versions of the Beepiz app will completely ignore start requests if improperly configured.
+ */
+@RequiresPermission(BeepizBindingConstants.permission)
 fun Context.startBeepizMonitoring() {
     sendBroadcast(Intent().also {
         it.`package` = BeepizBindingConstants.packageName
@@ -26,6 +36,10 @@ fun Context.startBeepizMonitoring() {
     })
 }
 
+/**
+ * Requests stop of Beepiz monitoring.
+ */
+@RequiresPermission(BeepizBindingConstants.permission)
 fun Context.stopBeepizMonitoring() {
     sendBroadcast(Intent().also {
         it.`package` = BeepizBindingConstants.packageName
@@ -36,6 +50,9 @@ fun Context.stopBeepizMonitoring() {
 /**
  * In case the `requiresConfig` [Boolean] parameter of the [handleState] lambda is `false`,
  * you need to open the Beepiz app to let the user resolve the configuration issue.
+ *
+ * The easiest way to do so from an [Activity] is with the following snippet:
+ * `startActivity(packageManager.getLaunchIntentForPackage(BeepizBindingConstants.packageName))`
  *
  * Each time the state changes, any ongoing execution of the [handleState] lambda will be cancelled,
  * and it will then be called again with the new state.
