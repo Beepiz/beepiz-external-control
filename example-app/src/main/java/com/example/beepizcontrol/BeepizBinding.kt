@@ -101,7 +101,6 @@ suspend fun Context.runBeepizBindingUntilDisconnection(
                 service.send(registerMessage)
             }
         }
-    } catch (ignored: RemoteException) { // Remote process died. We can only retry.
     } catch (ignored: DeadObjectException) { // Remote process died. We can only retry.
     }
 }
