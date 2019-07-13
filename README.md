@@ -143,6 +143,12 @@ to be `"start_monitoring"`, and you have to specify the [`package`][setPackage] 
 When Beepiz monitoring is running, you can stop it by doing exactly the same as for starting it,
 but passing with the `Intent` action `"stop_monitoring"` instead.
 
+**Note:** You can reproduce the cases where Beepiz requires in-app configuration by disabling
+location in the device settings. There are other cases that might make Beepiz require in-app
+configuration, but this one is the easiest to replicate, and all the cases need to be handled the
+same way by your app: suggesting the user to open Beepiz, or open-it directly on any start/stop
+request, instead of actually starting or stopping the monitoring.
+
 [MainActivity]: /example-app/src/main/java/com/example/beepizcontrol/MainActivity.kt
 [root build.gradle]: /build.gradle
 [BeepizBindingConstants]: /example-app/src/main/java/com/example/beepizcontrol/BeepizBindingConstants.kt
