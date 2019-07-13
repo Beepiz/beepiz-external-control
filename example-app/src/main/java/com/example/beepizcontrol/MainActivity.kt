@@ -47,7 +47,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     }
 
     private fun launchBeepizForConfiguration() {
-        startActivity(packageManager.getLaunchIntentForPackage(BeepizBindingConstants.packageName))
+        packageManager.getLaunchIntentForPackage(BeepizBindingConstants.packageName)?.let {
+            startActivity(it)
+        }
     }
 
     override fun onDestroy() {
