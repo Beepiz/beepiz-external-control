@@ -15,10 +15,8 @@ import kotlinx.coroutines.withContext
 
 suspend fun Context.awaitPackageInstalled(packageName: String) {
     withContext(Dispatchers.IO) {
-        try {
-            packageManager.getPackageInfo(packageName, 0)
+        if (packageManager.isPackageInstalled(packageName)) {
             return@withContext // Fast path, app is already installed.
-        } catch (e: PackageManager.NameNotFoundException) {
         }
         val channel = broadcastReceiverChannel(
             filter = IntentFilter(Intent.ACTION_PACKAGE_ADDED).apply {
@@ -29,13 +27,18 @@ suspend fun Context.awaitPackageInstalled(packageName: String) {
         )
         @UseExperimental(ExperimentalCoroutinesApi::class)
         channel.consume {
-            try {
-                packageManager.getPackageInfo(packageName, 0)
+            if (packageManager.isPackageInstalled(packageName)) {
                 return@withContext // Just installed/updated after we registered.
-            } catch (e: PackageManager.NameNotFoundException) {
             }
             receive()
             return@withContext
         }
     }
+}
+
+fun PackageManager.isPackageInstalled(packageName: String): Boolean = try {
+    getPackageInfo(packageName, 0)
+    true
+} catch (e: PackageManager.NameNotFoundException) {
+    false
 }
