@@ -33,3 +33,7 @@ dependencies {
     implementation("com.louiscad.splitties:splitties-permissions:$splitties_version")
     implementation("com.louiscad.splitties:splitties-alertdialog-appcompat-coroutines:$splitties_version")
 }
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=kotlin.Experimental"]
+}

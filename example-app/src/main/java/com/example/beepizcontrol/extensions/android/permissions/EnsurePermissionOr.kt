@@ -3,8 +3,9 @@ package com.example.beepizcontrol.extensions.android.permissions
 import androidx.fragment.app.FragmentActivity
 import com.example.beepizcontrol.R
 import kotlinx.coroutines.suspendCancellableCoroutine
+import splitties.experimental.ExperimentalSplittiesApi
 
-@Suppress("EXPERIMENTAL_API_USAGE")
+@UseExperimental(ExperimentalSplittiesApi::class)
 suspend fun FragmentActivity.ensurePermissionOrFinishAndCancel(
     permission: String,
     askDialogTitle: CharSequence?,

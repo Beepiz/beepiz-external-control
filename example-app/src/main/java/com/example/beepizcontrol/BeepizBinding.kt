@@ -14,6 +14,7 @@ import com.example.beepizcontrol.BeepizMonitoringState.NOT_MONITORING
 import com.example.beepizcontrol.extensions.android.content.withBoundService
 import com.example.beepizcontrol.extensions.android.os.ChannelMessageHandler
 import com.example.beepizcontrol.extensions.coroutines.consumeEachAndCancelPrevious
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 
 enum class BeepizMonitoringState {
@@ -88,7 +89,7 @@ suspend fun Context.runBeepizBindingUntilDisconnection(
                     if (SDK_INT >= 22) it.isAsynchronous = true
                 }
                 service.send(registerMessage)
-                @Suppress("EXPERIMENTAL_API_USAGE")
+                @UseExperimental(ExperimentalCoroutinesApi::class)
                 incomingChannel.consumeEachAndCancelPrevious { (state, requiresConfig) ->
                     handleState(state, requiresConfig)
                 }
