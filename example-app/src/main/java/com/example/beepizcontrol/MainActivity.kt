@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.beepizcontrol.BeepizMonitoringState.MONITORING
 import com.example.beepizcontrol.BeepizMonitoringState.NOT_MONITORING
+import com.example.beepizcontrol.extensions.android.content.pm.awaitPackageInstalled
 import com.example.beepizcontrol.extensions.android.permissions.ensurePermissionOrFinishAndCancel
 import com.example.beepizcontrol.extensions.coroutines.repeatWhileActive
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +26,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 showRationaleBeforeFirstAsk = false
             )
             repeatWhileActive {
-                //TODO: Handle Beepiz not installed, new installation, update and versionCode < 165.
+                awaitBeepizInstalled()
+                //TODO: Handle Beepiz versionCode < 165.
                 runBeepizBindingUntilDisconnection { state, requiresConfig ->
                     when (state) {
                         MONITORING -> {
@@ -50,6 +52,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         packageManager.getLaunchIntentForPackage(BeepizBindingConstants.packageName)?.let {
             startActivity(it)
         }
+    }
+
+    private suspend inline fun awaitBeepizInstalled() {
+        awaitPackageInstalled(BeepizBindingConstants.packageName)
     }
 
     override fun onDestroy() {
