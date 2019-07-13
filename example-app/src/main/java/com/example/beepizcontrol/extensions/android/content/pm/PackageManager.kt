@@ -16,7 +16,7 @@ import kotlinx.coroutines.withContext
 suspend fun Context.awaitPackageInstalled(packageName: String) {
     withContext(Dispatchers.IO) {
         try {
-            packageManager.getPackageInfo(BeepizBindingConstants.packageName, 0)
+            packageManager.getPackageInfo(packageName, 0)
             return@withContext // Fast path, app is already installed.
         } catch (e: PackageManager.NameNotFoundException) {
         }
