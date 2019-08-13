@@ -2,7 +2,8 @@
 
 Documentation and example to integrate Beepiz monitoring control from a third-party Android app.
 
-Starting with versionCode 165, [the Beepiz Android app](https://play.google.com/store/apps/details?id=net.suivideflotte.dati)
+Starting with versionCode 165 (available through the public beta channel on the Google Play Store),
+[the Beepiz Android app](https://play.google.com/store/apps/details?id=net.suivideflotte.dati)
 allows third-party apps to do the following:
 * Listen Beepiz monitoring state
 * Listen if Beepiz requires to be opened for configuration
