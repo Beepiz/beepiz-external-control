@@ -8,8 +8,13 @@ import com.example.beepizcontrol.extensions.android.content.pm.awaitPackageInsta
 import com.example.beepizcontrol.extensions.android.permissions.ensurePermissionOrFinishAndCancel
 import com.example.beepizcontrol.extensions.coroutines.repeatWhileActive
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
@@ -25,23 +30,20 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 askDialogMessage = "Permission required",
                 showRationaleBeforeFirstAsk = false
             )
-            repeatWhileActive {
-                awaitBeepizInstalled()
-                //TODO: Handle Beepiz versionCode < 165.
-                runBeepizBindingUntilDisconnection { state, requiresConfig ->
-                    when (state) {
-                        MONITORING -> {
-                            ui.awaitStopMonitoringRequest()
-                            if (requiresConfig) {
-                                launchBeepizForConfiguration()
-                            } else stopBeepizMonitoring()
-                        }
-                        NOT_MONITORING -> {
-                            ui.awaitStartMonitoringRequest()
-                            if (requiresConfig) {
-                                launchBeepizForConfiguration()
-                            } else startBeepizMonitoring()
-                        }
+            @UseExperimental(ExperimentalCoroutinesApi::class)
+            beepizStateFlow().collectLatest { (state, requiresConfig) ->
+                when (state) {
+                    MONITORING -> {
+                        ui.awaitStopMonitoringRequest()
+                        if (requiresConfig) {
+                            launchBeepizForConfiguration()
+                        } else stopBeepizMonitoring()
+                    }
+                    NOT_MONITORING -> {
+                        ui.awaitStartMonitoringRequest()
+                        if (requiresConfig) {
+                            launchBeepizForConfiguration()
+                        } else startBeepizMonitoring()
                     }
                 }
             }
@@ -52,10 +54,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         packageManager.getLaunchIntentForPackage(BeepizBindingConstants.packageName)?.let {
             startActivity(it)
         }
-    }
-
-    private suspend inline fun awaitBeepizInstalled() {
-        awaitPackageInstalled(BeepizBindingConstants.packageName)
     }
 
     override fun onDestroy() {

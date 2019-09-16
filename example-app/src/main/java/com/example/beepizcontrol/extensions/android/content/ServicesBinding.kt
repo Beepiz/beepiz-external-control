@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import com.example.beepizcontrol.extensions.coroutines.offerCatching
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consume
 import kotlinx.coroutines.coroutineScope
@@ -40,6 +41,7 @@ suspend fun Context.withBoundService(
 
     try {
         if (bindService(service, connection, flags)) coroutineScope {
+            @UseExperimental(ExperimentalCoroutinesApi::class)
             binderChannel.consume {
                 val serviceBinder = receive() ?: return@coroutineScope
                 val job = launch {
