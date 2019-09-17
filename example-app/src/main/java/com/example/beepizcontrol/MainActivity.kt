@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.beepizcontrol.BeepizMonitoringState.MONITORING
 import com.example.beepizcontrol.BeepizMonitoringState.NOT_MONITORING
 import com.example.beepizcontrol.extensions.android.permissions.ensurePermissionOrFinishAndCancel
+import com.example.beepizcontrol.extensions.coroutines.repeatWhileActive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
@@ -27,18 +28,20 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             )
             @UseExperimental(ExperimentalCoroutinesApi::class)
             beepizStateFlow().collectLatest { (state, requiresConfig) ->
-                when (state) {
-                    MONITORING -> {
-                        ui.awaitStopMonitoringRequest()
-                        if (requiresConfig) {
-                            launchBeepizForConfiguration()
-                        } else stopBeepizMonitoring()
-                    }
-                    NOT_MONITORING -> {
-                        ui.awaitStartMonitoringRequest()
-                        if (requiresConfig) {
-                            launchBeepizForConfiguration()
-                        } else startBeepizMonitoring()
+                repeatWhileActive {
+                    when (state) {
+                        MONITORING -> {
+                            ui.awaitStopMonitoringRequest()
+                            if (requiresConfig) {
+                                launchBeepizForConfiguration()
+                            } else stopBeepizMonitoring()
+                        }
+                        NOT_MONITORING -> {
+                            ui.awaitStartMonitoringRequest()
+                            if (requiresConfig) {
+                                launchBeepizForConfiguration()
+                            } else startBeepizMonitoring()
+                        }
                     }
                 }
             }

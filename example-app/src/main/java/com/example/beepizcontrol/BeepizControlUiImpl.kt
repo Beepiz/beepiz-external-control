@@ -27,13 +27,23 @@ class BeepizControlUiImpl(private val activity: Activity) : BeepizControlUi {
     override suspend fun awaitStartMonitoringRequest() {
         startStopButton.text = "Start"
         startStopButton.setIconResource(R.drawable.ic_play_arrow_black_24dp)
-        startStopButton.awaitOneClick()
+        try {
+            startStopButton.awaitOneClick()
+        } finally {
+            startStopButton.text = ""
+            startStopButton.icon = null
+        }
     }
 
     override suspend fun awaitStopMonitoringRequest() {
         startStopButton.text = "Stop"
         startStopButton.setIconResource(R.drawable.ic_stop_black_24dp)
-        startStopButton.awaitOneClick()
+        try {
+            startStopButton.awaitOneClick()
+        } finally {
+            startStopButton.text = ""
+            startStopButton.icon = null
+        }
     }
 
     val root: View

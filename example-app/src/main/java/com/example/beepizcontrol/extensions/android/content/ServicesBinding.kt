@@ -11,6 +11,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consume
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Attempts to bind to the [service], runs [block] once connected, and cancels it on disconnection.
@@ -39,11 +40,16 @@ suspend fun Context.withBoundService(
         }
     }
 
-    try {
-        if (bindService(service, connection, flags)) coroutineScope {
+    val serviceBindingStarted = bindService(service, connection, flags)
+    if (serviceBindingStarted) try {
+        coroutineScope {
             @UseExperimental(ExperimentalCoroutinesApi::class)
             binderChannel.consume {
-                val serviceBinder = receive() ?: return@coroutineScope
+                val serviceBinder = withTimeoutOrNull(3_000) {
+                    // Sometimes, onServiceConnected is never called.
+                    // This happens often when the app has just been updated, so we use a timeout.
+                    receive()
+                } ?: return@coroutineScope
                 val job = launch {
                     block(serviceBinder)
                 }
