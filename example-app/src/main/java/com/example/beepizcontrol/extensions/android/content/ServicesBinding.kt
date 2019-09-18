@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import com.example.beepizcontrol.extensions.coroutines.offerCatching
+import com.example.beepizcontrol.extensions.coroutines.raceOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consume
@@ -53,8 +54,12 @@ suspend fun Context.withBoundService(
                 val job = launch {
                     block(serviceBinder)
                 }
-                receive() // Second value always comes from onServiceDisconnected.
-                job.cancel()
+                raceOf({
+                    receive() // Second value always comes from onServiceDisconnected.
+                    job.cancel()
+                }, {
+                    job.join()
+                })
             }
         }
     } finally {
