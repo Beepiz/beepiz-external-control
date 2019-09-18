@@ -6,7 +6,6 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build.VERSION.SDK_INT
 import android.os.PatternMatcher
-import com.example.beepizcontrol.BeepizBindingConstants
 import com.example.beepizcontrol.extensions.android.content.broadcastReceiverChannel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
